@@ -30,14 +30,17 @@
 #include <unwindstack/RegsArm64.h>
 #include <unwindstack/RegsX86.h>
 #include <unwindstack/RegsX86_64.h>
+#include <unwindstack/RegsLoongarch64.h>
 #include <unwindstack/UserArm.h>
 #include <unwindstack/UserArm64.h>
 #include <unwindstack/UserX86.h>
 #include <unwindstack/UserX86_64.h>
+#include <unwindstack/UserLoongarch64.h>
 
 // kernel uapi headers
 #include <uapi/asm-arm/asm/perf_regs.h>
 #include <uapi/asm-x86/asm/perf_regs.h>
+#include <uapi/asm-loongarch/asm/perf_regs.h>
 #define perf_event_arm_regs perf_event_arm64_regs
 #include <uapi/asm-arm64/asm/perf_regs.h>
 #undef perf_event_arm_regs
@@ -72,6 +75,8 @@ uint64_t PerfUserRegsMask(unwindstack::ArchEnum arch) {
       return (1ULL << PERF_REG_ARM64_MAX) - 1;
     case unwindstack::ARCH_ARM:
       return ((1ULL << PERF_REG_ARM_MAX) - 1);
+    case unwindstack::ARCH_LOONGARCH64:
+      return (1ULL << PERF_REG_LOONGARCH_MAX) - 1;
     // perf on x86_64 doesn't allow sampling ds/es/fs/gs registers. See
     // arch/x86/kernel/perf_regs.c in the kernel.
     case unwindstack::ARCH_X86_64:
@@ -196,6 +201,45 @@ std::unique_ptr<unwindstack::Regs> ToLibUnwindstackRegs(
     return std::unique_ptr<unwindstack::Regs>(
         unwindstack::RegsX86::Read(&x86_user_regs));
   }
+
+  if (arch == unwindstack::ARCH_LOONGARCH64) {
+      unwindstack::loongarch64_user_regs loongarch64_user_regs;
+      memset(&loongarch64_user_regs, 0, sizeof(loongarch64_user_regs));
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_PC] = raw_regs.regs[PERF_REG_LOONGARCH_PC];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_RA] = raw_regs.regs[PERF_REG_LOONGARCH_RA];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_SP] = raw_regs.regs[PERF_REG_LOONGARCH_SP];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_GP] = raw_regs.regs[PERF_REG_LOONGARCH_GP];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_TP] = raw_regs.regs[PERF_REG_LOONGARCH_TP];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T0] = raw_regs.regs[PERF_REG_LOONGARCH_T0];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T1] = raw_regs.regs[PERF_REG_LOONGARCH_T1];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T2] = raw_regs.regs[PERF_REG_LOONGARCH_T2];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S0] = raw_regs.regs[PERF_REG_LOONGARCH_S0];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S1] = raw_regs.regs[PERF_REG_LOONGARCH_S1];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A0] = raw_regs.regs[PERF_REG_LOONGARCH_A0];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A1] = raw_regs.regs[PERF_REG_LOONGARCH_A1];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A2] = raw_regs.regs[PERF_REG_LOONGARCH_A2];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A3] = raw_regs.regs[PERF_REG_LOONGARCH_A3];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A4] = raw_regs.regs[PERF_REG_LOONGARCH_A4];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A5] = raw_regs.regs[PERF_REG_LOONGARCH_A5];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A6] = raw_regs.regs[PERF_REG_LOONGARCH_A6];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_A7] = raw_regs.regs[PERF_REG_LOONGARCH_A7];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S2] = raw_regs.regs[PERF_REG_LOONGARCH_S2];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S3] = raw_regs.regs[PERF_REG_LOONGARCH_S3];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S4] = raw_regs.regs[PERF_REG_LOONGARCH_S4];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S5] = raw_regs.regs[PERF_REG_LOONGARCH_S5];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S6] = raw_regs.regs[PERF_REG_LOONGARCH_S6];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S7] = raw_regs.regs[PERF_REG_LOONGARCH_S7];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S8] = raw_regs.regs[PERF_REG_LOONGARCH_S8];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S9] = raw_regs.regs[PERF_REG_LOONGARCH_S9];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S10] = raw_regs.regs[PERF_REG_LOONGARCH_S10];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_S11] = raw_regs.regs[PERF_REG_LOONGARCH_S11];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T3] = raw_regs.regs[PERF_REG_LOONGARCH_T3];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T4] = raw_regs.regs[PERF_REG_LOONGARCH_T4];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T5] = raw_regs.regs[PERF_REG_LOONGARCH_T5];
+      loongarch64_user_regs.regs[PERF_REG_LOONGARCH_T6] = raw_regs.regs[PERF_REG_LOONGARCH_T6];
+      return std::unique_ptr<unwindstack::Regs>(
+        unwindstack::RegsLoongarch64::Read(&loongarch64_user_regs));
+    }
 
   PERFETTO_FATAL("Unsupported architecture");
 }
