@@ -34,3 +34,7 @@ GPATH
 GRTAGS
 GTAGS
 depot_tools/
+
+# Failed patches
+*.orig
+*.rej
