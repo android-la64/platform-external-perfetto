@@ -51,7 +51,7 @@
 #include <uapi/asm-arm64/asm/perf_regs.h>
 #undef PERF_REG_EXTENDED_MASK
 #undef perf_event_arm_regs
-#include <uapi/asm-loongarch64/asm/perf_regs.h>
+#include <uapi/asm-loongarch/asm/perf_regs.h>
 #undef PERF_REG_EXTENDED_MASK
 #include <uapi/asm-riscv/asm/perf_regs.h>
 #undef PERF_REG_EXTENDED_MASK
